@@ -6,11 +6,13 @@
     this.$input = $(input),
     this.$target = options.target || this.$input;
 
-    $.template( "mainDiv", "<div class='token-input-wrapper'><ul class='token-input-wrapper-list'><li class='token-li-input'><input /></li></ul></div>");
-    $.template( "liTemplate", "<li><span>${tag}</span><span class='delete-tag'></span></li>");
+    this.TEMPLATES = {
+      'mainDiv': Template("<div class='token-input-wrapper'><ul class='token-input-wrapper-list'><li class='token-li-input'><input /></li></ul></div>"),
+      'liTemplate': Template("<li><span>${tag}</span><span class='delete-tag'></span></li>")
+    };
 
     var initialize = function () {
-      this.$input.after($.tmpl( "mainDiv" ));
+      this.$input.after(this.TEMPLATES['mainDiv']());
       this.$tokenDiv = this.$input.next();
       this.$tokenInput = this.$tokenDiv.find('input');
       this.$tokenUl = this.$tokenDiv.find('ul');
@@ -92,7 +94,7 @@
       var tag = $.trim( tagString );
       if (tag.length && !this.tagList[tag]) {
         this.tagList[tag] = true;
-        this.$tokenUl.find('.token-li-input').before($.tmpl( "liTemplate", {"tag": tag} ) );
+        this.$tokenUl.find('.token-li-input').before( this.TEMPLATES["liTemplate"]({"tag": tag}) );
         this.$tokenUl.find('.token-li-input input').val('');
         this.fillHiddenInput()
         this.tagSet.splice(this.tagSet.indexOf(tag), 1)
@@ -198,11 +200,26 @@
     regexp: function (text) {
       return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     }
-  }
+  };
+
+  var Template = function (markup) {
+    return function (variables) {
+      var regexp,
+          body = markup;
+      for (var key in variables) {
+        if (variables.hasOwnProperty(key)) {
+          regexp = new RegExp("\\${" + key + "}", 'gmi');
+          body = body.replace(regexp, variables[key]);
+        }
+      }
+      return body;
+    };
+  };
 
   $.fn.tokenInput = function (options) {
     var defaults = {
-      possibleTags: ["ruby", "rails", "js"]
+      possibleTags: ["ruby", "rails", "js"],
+      existingTags: []
     };
 
     options = $.extend(defaults, options);
