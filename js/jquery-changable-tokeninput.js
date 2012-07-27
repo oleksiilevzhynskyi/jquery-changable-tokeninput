@@ -1,132 +1,134 @@
 (function ($) {
   var TokenInput = function (input, options) {
-    this.tagList = {};
-    this.tagSet = options.possibleTags || [];
-    this.existingTags = options.existingTags || [];
-    this.$input = $(input),
-    this.$target = options.target || this.$input;
+    var tagSet = options.possibleTags || [],
+        existingTags = options.existingTags || [],
+        tagList = {},
+        $input = $(input),
+        $target = options.target || $input,
+        $tokenInput,
+        $tokenDiv,
+        $tokenUl,
+        currentTag;
 
-    this.TEMPLATES = {
+    var TEMPLATES = {
       'mainDiv': Template("<div class='token-input-wrapper'><ul class='token-input-wrapper-list'><li class='token-li-input'><input /></li></ul></div>"),
       'liTemplate': Template("<li><span>${tag}</span><span class='delete-tag'></span></li>")
     };
 
-    var initialize = function () {
-      this.$input.after(this.TEMPLATES['mainDiv']());
-      this.$tokenDiv = this.$input.next();
-      this.$tokenInput = this.$tokenDiv.find('input');
-      this.$tokenUl = this.$tokenDiv.find('ul');
-      this.$input.hide();
-      this.populate();
-      this.bindings();
-    };
-    initialize.call(this);
-  };
-
-  TokenInput.prototype = {
-    populate: function () {
-      var tags = this.existingTags;
+    var populate = function () {
+      var tags = existingTags;
       if (tags) {
         for (var i in tags) {
-          this.addTag(tags[i]);
+          addTag(tags[i]);
         }
       }
-    },
-    bindings: function () {
+    };
+
+    var bindings = function () {
       var that = this;
-      this.$tokenInput.on('keydown.token-input', function (e) {
+      $tokenInput.on('keydown.token-input', function (e) {
         var tag = $(this).val();
         if(e.keyCode === 9 || e.keyCode === 188){
-          that.addTag.call(that, tag);
+          addTag(tag);
           e.preventDefault();
         }
         if (e.keyCode === 13 && tag.length) {
           e.preventDefault();
         }
       });
-      this.$tokenInput.on('keyup.token-input', function () { that.showMatch.apply(that, arguments); });
-      this.$tokenInput.on('keyup.token-input', function () { that.deselectTags.apply(that, arguments); });
-      this.$tokenInput.on('keydown.token-input', function () { that.tagsNavigator.apply(that, arguments); });
-      this.$tokenDiv.on('click.token-input', 'span.delete-tag', function () { that.removeTag.apply(that, arguments); });
-      this.$tokenDiv.on('click.token-input', '.token-input-match-tags-list li', function () { that.selectTagByClick.apply(that, arguments); });
-      $('body').on('click', function (e) {
+      $tokenInput.on('keyup.token-input', showMatch);
+      $tokenInput.on('keyup.token-input', deselectTags);
+      $tokenInput.on('keydown.token-input', tagsNavigator);
+      $tokenDiv.on('click.token-input', 'span.delete-tag', removeTag);
+      $tokenDiv.on('click.token-input', '.token-input-match-tags-list li', selectTagByClick);
+      $('body').on('click.token-input', function (e) {
         if ( !$(e.target).closest('.token-input-match-tags-list').length ){
-          that.hidePopup();
+          hidePopup();
         }
       });
-    },
-    showPopup: function (matchTags) {
-      this.$tokenDiv.find('.token-input-match-tags-list').remove();
+    };
+
+    var showPopup = function (matchTags) {
+      $tokenDiv.find('.token-input-match-tags-list').remove();
       if (matchTags.length) {
-        this.$tokenDiv.append("<ul class='token-input-match-tags-list'><li>" + matchTags.join('</li><li>') + "</li></ul>");
+        $tokenDiv.append("<ul class='token-input-match-tags-list'><li>" + matchTags.join('</li><li>') + "</li></ul>");
       }
-      this.initSelector();
-    },
-    selectTagByClick: function (e) {
-       this.addTag($(e.target).text());
-       this.hidePopup();
-    },
-    hidePopup: function () {
-      this.$tokenDiv.find('.token-input-match-tags-list').remove();
-    },
-    findMatch: function (tag) {
+      initSelector();
+    };
+
+    var selectTagByClick = function (e) {
+       addTag($(e.target).text());
+       hidePopup();
+    };
+
+    var hidePopup = function () {
+      $tokenDiv.find('.token-input-match-tags-list').remove();
+    };
+
+    var findMatch = function (tag) {
       var matchTags = [],
           matched_tag,
           regexp;
       if ( !$.trim(tag).length ) { return []; }
-      for (var i = 0, max = this.tagSet.length; i< max; i++) {
+      for (var i = 0, max = tagSet.length; i< max; i++) {
         regexp = new RegExp(Escape.regexp(tag))
-        if ( this.tagSet[i].match(regexp) ) {
-          matched_tag = Escape.html( this.tagSet[i] ).replace(tag, "<em>" + tag + "</em>");
+        if ( tagSet[i].match(regexp) ) {
+          matched_tag = Escape.html( tagSet[i] ).replace(tag, "<em>" + tag + "</em>");
           matchTags.push(matched_tag);
         }
       }
       return matchTags;
-    },
-    removeTag: function (e) {
+    };
+
+    var removeTag = function (e) {
       var tag = $(e.target).prev().text();
-      delete this.tagList[tag]
-      this.tagSet.push(tag);
+      delete tagList[tag]
+      tagSet.push(tag);
       $(e.target).parent().remove();
-      this.fillHiddenInput();
-    },
-    addTag: function (tagString) {
+      fillHiddenInput();
+    };
+
+    var addTag = function (tagString) {
       var tag = $.trim( tagString );
-      if (tag.length && !this.tagList[tag]) {
-        this.tagList[tag] = true;
-        this.$tokenUl.find('.token-li-input').before( this.TEMPLATES["liTemplate"]({"tag": tag}) );
-        this.$tokenUl.find('.token-li-input input').val('');
-        this.fillHiddenInput()
-        this.tagSet.splice(this.tagSet.indexOf(tag), 1)
+      if (tag.length && !tagList[tag]) {
+        tagList[tag] = true;
+        $tokenUl.find('.token-li-input').before( TEMPLATES["liTemplate"]({"tag": tag}) );
+        $tokenUl.find('.token-li-input input').val('');
+        fillHiddenInput()
+        tagSet.splice(tagSet.indexOf(tag), 1)
       }
-    },
-    showMatch: function (options) {
-      var tag = this.$tokenInput.val(),
-          matchTags = this.findMatch(tag),
+    };
+
+    var showMatch = function (options) {
+      var tag = $tokenInput.val(),
+          matchTags = findMatch(tag),
           defaults = { force: false };
       options = $.extend(defaults, options);
-      if ( this.currentTag !== tag || options.force ) {
-        this.showPopup(matchTags);
+      if ( currentTag !== tag || options.force ) {
+        showPopup(matchTags);
       }
-      this.currentTag = tag;
-    },
-    initSelector: function () {
-      this.$tokenDiv.find('.token-input-match-tags-list li:first').addClass('selected');
-    },
-    tagsNavigator: function (e) {
+      currentTag = tag;
+    };
+
+    var initSelector = function () {
+      $tokenDiv.find('.token-input-match-tags-list li:first').addClass('selected');
+    };
+
+    var tagsNavigator = function (e) {
       var $matchTagsList,
           $active,
           $prevItem;
 
-      if (!this.hintListNavigation(e)){
-        this.defaultNavigation(e)
+      if (!hintListNavigation(e)){
+        defaultNavigation(e)
       }
-    },
-    defaultNavigation: function (e) {
-      var $prevTag = this.$tokenInput.parent().prev();
+    };
+
+    var defaultNavigation = function (e) {
+      var $prevTag = $tokenInput.parent().prev();
       switch (e.keyCode) {
         case 8:
-          if ( !$prevTag.length || this.$tokenInput.val() ) { return true }
+          if ( !$prevTag.length || $tokenInput.val() ) { return true }
           if ( $prevTag.hasClass('selected') ) {
             $prevTag.find('span').trigger('click.token-input');
           } else {
@@ -134,13 +136,14 @@
           }
           break;
         case 40:
-          if ( !this.$tokenDiv.find('.token-input-match-tags-list').length ) {
-            this.showMatch({force: true});
+          if ( !$tokenDiv.find('.token-input-match-tags-list').length ) {
+            showMatch({force: true});
           }
       }
-    },
-    hintListNavigation: function (e) {
-        $matchTagsList = this.$tokenDiv.find('.token-input-match-tags-list');
+    };
+
+    var hintListNavigation = function (e) {
+        $matchTagsList = $tokenDiv.find('.token-input-match-tags-list');
         if ( !$matchTagsList.length ) {
           return false;
         }
@@ -165,32 +168,44 @@
             break;
           case 13:
             $active = $matchTagsList.find('.selected');
-            this.addTag($active.text());
+            addTag($active.text());
             e.preventDefault();
             break;
           case 27:
-            this.hidePopup();
+            hidePopup();
             break;
           default:
             return false;
         }
         return true;
-    },
-    deselectTags: function () {
-      if ( this.$tokenInput.val() ) {
-        this.$tokenInput.parent().prev().removeClass('selected');
+    };
+
+    var deselectTags = function () {
+      if ( $tokenInput.val() ) {
+        $tokenInput.parent().prev().removeClass('selected');
       }
-    },
-    fillHiddenInput: function () {
+    };
+
+    var fillHiddenInput = function () {
       var tags = [];
 
-      for (key in this.tagList) {
-        if ( this.tagList.hasOwnProperty(key) ) {
+      for (key in tagList) {
+        if ( tagList.hasOwnProperty(key) ) {
           tags.push(key);
         }
       }
-      this.$target.val(tags.join(','));
-    },
+      $target.val(tags.join(','));
+    };
+
+    (function () {
+      $input.after(TEMPLATES['mainDiv']());
+      $tokenDiv = $input.next();
+      $tokenInput = $tokenDiv.find('input');
+      $tokenUl = $tokenDiv.find('ul');
+      $input.hide();
+      populate();
+      bindings();
+    })();
   };
 
   var Escape = {
