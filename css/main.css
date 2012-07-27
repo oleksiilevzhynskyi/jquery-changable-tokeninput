@@ -1,0 +1,91 @@
+.token-input-wrapper ul.token-input-wrapper-list li {
+  position: relative;
+  font-size: 0.78em;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  color: #80858a;
+  margin: 3px 1px;
+  vertical-align: top;
+  max-width: 100%;
+  min-height: 17px;
+  overflow: hidden;
+  padding: 2px 4px 4px 6px;
+  margin: 1px;
+  box-shadow: inset -1px -1px 0 white, inset 1px -1px 0 white;
+  -webkit-box-shadow: inset -1px -1px 0 white, inset 1px -1px 0 white;
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1;
+  *display: inline;
+  *vertical-align: auto;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -khtml-border-radius: 3px;
+  background: #f6f6f6;
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #f6f6f6), color-stop(1, white));
+  background: -moz-linear-gradient(top, white, #f6f6f6);
+  background: -o-linear-gradient(top, white, #f6f6f6); }
+  .token-input-wrapper ul.token-input-wrapper-list li.selected {
+    background: #767b7f;
+    color: #fff;
+    box-shadow: none;
+    -webkit-box-shadow: none; }
+    .token-input-wrapper ul.token-input-wrapper-list li.selected:hover {
+      background: #767b7f;
+      color: #fff; }
+    .token-input-wrapper ul.token-input-wrapper-list li.selected a:hover {
+      color: #fff; }
+
+.token-input-wrapper ul.token-input-wrapper-list {
+  min-height: 26px;
+  border: 1px solid grey;
+  margin: 0;
+  padding: 0px;
+  max-width: 300px; }
+  .token-input-wrapper ul.token-input-wrapper-list li.token-li-input {
+    border: none;
+    display: inline-block;
+    margin-top: 3px;
+    padding: 0;
+    list-style-type: none; }
+  .token-input-wrapper ul.token-input-wrapper-list li span.delete-tag {
+    display: inline-block;
+    height: 14px;
+    width: 14px;
+    position: relative;
+    top: 4px;
+    margin-left: 5px;
+    background: url("/images/skills-remove-sprite.png") -61px 0 no-repeat; }
+    .token-input-wrapper ul.token-input-wrapper-list li span.delete-tag:hover {
+      background: url("/images/skills-remove-sprite.png") 0 0 no-repeat; }
+    .token-input-wrapper ul.token-input-wrapper-list li span.delete-tag:active {
+      background: url("/images/skills-remove-sprite.png") -31px 0 no-repeat; }
+.token-input-wrapper input {
+  border: none;
+  list-style-type: none;
+  height: 18px; }
+.token-input-wrapper em {
+  font-weight: bold;
+  font-style: normal; }
+
+.token-input-match-tags-list {
+  padding: 0;
+  margin: 0;
+  margin-top: -1px;
+  border: 1px solid grey; }
+  .token-input-match-tags-list li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: block;
+    color: grey; }
+    .token-input-match-tags-list li.selected {
+      border: 1px solid grey;
+      margin: 0;
+      padding: 0;
+      display: block;
+      background: #5670a6;
+      color: white; }

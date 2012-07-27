@@ -1,0 +1,23 @@
+@mixin border-radius($radius){
+  border-radius: $radius;
+  -moz-border-radius: $radius;
+  -webkit-border-radius: $radius;
+  -khtml-border-radius: $radius;
+}
+
+@mixin linear_gradient($color_from, $color_bottom){
+  background: $color_bottom;
+  background: -webkit-gradient(linear,left bottom,left top,color-stop(0, $color_bottom),color-stop(1, $color_from));
+  background: -moz-linear-gradient(top, $color_from, $color_bottom);
+  background: -o-linear-gradient(top, $color_from, $color_bottom);
+}
+
+@mixin inline-block{
+  display: -moz-inline-box;
+  -moz-box-orient: vertical;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1;
+  *display: inline;
+  *vertical-align: auto;
+}

@@ -1,0 +1,7 @@
+{
+  "name": "jquery-changable-tokeninput",
+  "version": "0.1.0",
+  "dependencies" : {
+    "scss": ""
+  }
+}
